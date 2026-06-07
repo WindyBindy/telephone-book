@@ -1,0 +1,12 @@
+.item{
+  font-family: Arial, Helvetica, sans-serif;
+  color: coral;
+}
+
+.deleteBtn{
+  background-color: rgb(210, 30, 30);
+color: aquamarine;
+border: none;
+padding: 10px;
+border-radius: 15px;
+}

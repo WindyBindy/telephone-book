@@ -1,44 +1,57 @@
-import { Component } from 'react'
-import { nanoid } from 'nanoid'
-import './App.css'
+
+import { Component } from 'react';
+import './App.css';
+import ContactForm from './components/ContactForm/ContactForm';
+import Filter from './components/Filter/Filter';
+import ContactList from './components/ContactList/ContactList';
 
 class App extends Component {
   state = {
-    contacts: [],
-    filter: '', // 1. Добавили filter в стейт, как просят в ТЗ
-    name: '',
-    number: '',
+    contacts: [
+    {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+    {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+    {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+    {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+  ],
+    filter: '', 
   }
 
-  // Наш универсальный метод сам справится с filter, так как у инпута будет name='filter'
+  
   handleInputChange = event => {
-    const { name, value } = event.target
-    this.setState({ [name]: value })
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
   }
 
-  handleAddContact = event => {
-    event.preventDefault()
+  addContact = (newContact) => {
+    
+    const duplicate = this.state.contacts.find(
+      contact => contact.name.toLowerCase() === newContact.name.toLowerCase()
+    );
 
-    if (this.state.name.trim() === '' || this.state.number.trim() === '') return;
-
-    const newContact = {
-      id: nanoid(),
-      name: this.state.name,
-      number: this.state.number,
+    if (duplicate) {
+      alert(`${newContact.name} is already in contacts.`);
+      return;
     }
 
     this.setState(prevState => ({
-      contacts: [...prevState.contacts, newContact],
-      name: '',
-      number: '',
-    }))
+      contacts: [...prevState.contacts, newContact]
+    }));
   }
+  handleDelete = id => {
+		this.setState(prevState => {
+			return {
+				contacts: prevState.contacts.filter(contact => contact.id !== id),
+			}
+		})
+	}
+
+
+
 
   render() {
-    // Деструктуризируем filter из стейта
-    const { contacts, filter, name, number } = this.state
-
-    // 3. Логика фильтрации: приводим всё к нижнему регистру (.toLowerCase())
+    
+    const { contacts, filter } = this.state; 
+    
     const normalizedFilter = filter.toLowerCase();
     const filteredContacts = contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
@@ -48,55 +61,17 @@ class App extends Component {
       <div style={{ padding: '20px' }}>
         <h1>Phonebook</h1>
 
-        <form onSubmit={this.handleAddContact}>
-          <div>
-            <p>Name</p>
-            <input
-              type='text'
-              name='name'
-              value={name}
-              onChange={this.handleInputChange}
-              pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-              title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-              required
-            />
-            <p>Number</p>
-            <input
-              type='tel'
-              name='number'
-              value={number}
-              onChange={this.handleInputChange}
-              pattern='\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}'
-              title='Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
-              required
-            />
-            <br />
-            <button type='submit'>Add contact</button>
-          </div>
-        </form>
+        
+        <ContactForm onAddContact={this.addContact} />
 
         <h2>Contacts</h2>
         
-        {/* 2. Добавили поле поиска (без формы вокруг него) */}
-        <div>
-          <p>Find contacts by name</p>
-          <input
-            type="text"
-            name="filter" // Имя совпадает с ключом в state
-            value={filter}
-            onChange={this.handleInputChange} // Использует тот же метод
-          />
-        </div>
+        <Filter value={filter} onChange={this.handleInputChange} />
 
-        <ul>
-          {/* Вместо обычных contacts рендерим уже отфильтрованный отфильтрованный массив filteredContacts */}
-          {filteredContacts.map(({ id, name, number }) => (
-            <li key={id}>{name}: {number}</li>
-          ))}
-        </ul>
+        <ContactList list={filteredContacts} handleDelete={this.handleDelete}/>
       </div>
-    )
+    );
   }
 }
 
-export default App
+export default App;
