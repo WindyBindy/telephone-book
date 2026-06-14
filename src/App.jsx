@@ -17,6 +17,26 @@ class App extends Component {
   }
 
   
+componentDidMount(){
+    console.log("виклик компонент дедмаунт");
+    const data = localStorage.getItem("контакты")
+    if (data){
+      this.setState({
+        contacts: JSON.parse(data)
+      })
+    }
+  }
+
+  componentDidUpdate(_,prevState){
+    if (prevState.contacts.length !== this.state.contacts.length){
+      localStorage.setItem("контакты", JSON.stringify(this.state.contacts))
+    }
+    
+        
+    console.log("виклик компонент дидапдейт");
+  }
+
+  
   handleInputChange = event => {
     const { name, value } = event.target;
     this.setState({ [name]: value });
