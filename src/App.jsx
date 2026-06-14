@@ -33,7 +33,7 @@ componentDidMount(){
     }
     
         
-    console.log("виклик компонент дидапдейт");
+    console.log("виклик компонент дидапдейтn");
   }
 
   
